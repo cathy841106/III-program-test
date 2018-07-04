@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>D3 cloud</title>
+    <script src="d3.js"></script>
+	<script src="d3.layout.cloud.js"></script>
+    <script src="data.json"></script>  <!引入json檔>
+</head>
+<body>
+	<div id="vis"></div>   <!放置文字雲區域>
+    <script type="text/javascript">
+      var fill = d3.scale.category20(); 
+      var keydata = JSON.parse(data);   
+      var layout = d3.layout.cloud()
+             .size([500, 500])
+             .words(keydata)
+             .padding(2)
+             .rotate(0)
+             .font('"微軟正黑體",Impact')
+             .fontSize(function(d) { return d.size; })
+             .on("end", draw);
+      layout.start();
+      function draw(words) {
+         d3.select("#vis").append("svg")
+         .attr("width", layout.size()[0])
+         .attr("height", layout.size()[1])
+         .append("g")
+         .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+         .selectAll("text")
+         .data(words)
+         .enter().append("text")
+         .style("font-size", function(d) { return d.size + "px"; })
+         .style("font-family",'"微軟正黑體",Impact')
+         .style("fill", function(d, i) { return fill(i); })
+         .attr("text-anchor", "middle")
+         .attr("transform", function(d) {
+             return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+               })
+         .text(function(d) { return d.text; });
+      }
+    </script>
+</body>
+</html>
